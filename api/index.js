@@ -10,6 +10,7 @@ const authRoutes = require('../routes/authRoutes');
 const disposisiRoutes = require('../routes/disposisiRoutes');
 const notifRoutes = require('../routes/notifRoutes');
 const displayRoutes = require('../routes/displayRoutes');
+const tindaklanjutRoutes = require('../routes/tindaklanjutRoutes');
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/task', disposisiRoutes);
 app.use('/api/notif', notifRoutes);
 app.use('/api/media', displayRoutes);
+app.use('/api/tindaklanjut', tindaklanjutRoutes);
 
 module.exports = app;
