@@ -58,7 +58,7 @@ const updateTindakLanjut = async (req, res) => {
         const { judul_tindaklanjut } = req.body;
         const { isi_tindaklanjut } = req.body;
         const userId = req.user?._id || req.user?.id;
-        
+
         console.log(userId);
 
         let query = { _id: id, personil_yang_dituju: userId };
@@ -80,11 +80,11 @@ const updateTindakLanjut = async (req, res) => {
                 stream.end(file.buffer);
                 stream.on('finish', () => resolve(stream.id));
                 stream.on('error', reject);
-        });
-        
-            let fileTindakLanjutId = [];
+            });
 
-            if (req.files?.file_tindaklanjut) {
+        let fileTindakLanjutId = [];
+
+        if (req.files?.file_tindaklanjut) {
             for (const file of req.files.file_tindaklanjut) {
                 const fileId = await uploadToGridFS(file);
                 fileTindakLanjutId.push(fileId);
@@ -100,7 +100,7 @@ const updateTindakLanjut = async (req, res) => {
 
         const populated = await TindakLanjut.findById(tindaklanjut._id)
             .populate('personil_yang_dituju', 'name');
-        
+
         res.json({
             message: 'Tindak Lanjut Telah Berhasil Diisi',
             tindaklanjut: populated
@@ -155,8 +155,9 @@ const getFile = async (req, res) => {
 
         res.set({
             'Content-Type': file.contentType || 'application/octet-stream',
-            'Content-Disposition': 'inline'
+            'Content-Disposition': `inline; filename="${file.filename}"`
         });
+
 
         const downloadStream = bucket.openDownloadStream(fileId);
 
@@ -171,6 +172,35 @@ const getFile = async (req, res) => {
     }
 };
 
+const getFileMeta = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid file id' });
+    }
+
+    const file = await mongoose.connection.db
+      .collection('fs.files')
+      .findOne({ _id: new mongoose.Types.ObjectId(id) });
+
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    res.json({
+      id: file._id,
+      filename: file.filename,
+      contentType: file.contentType,
+      length: file.length,
+      uploadDate: file.uploadDate
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving file metadata' });
+  }
+};
+
 
 module.exports =
 {
@@ -178,6 +208,7 @@ module.exports =
     createTindakLanjut,
     updateTindakLanjut,
     getMyArahan,
-    getFile
+    getFile,
+    getFileMeta
 }
 

@@ -21,5 +21,7 @@ router.patch('/update/:id/tindaklanjut', verifyToken, authorizationRoles('pegawa
 // router get membuka file
 router.get('/file_tindak/:id', getFile);
 
+router.get('/file_meta/:id', getFileMeta);
+
 
 module.exports = router;
