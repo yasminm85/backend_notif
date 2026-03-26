@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema({
         require: true,
         enum: ["admin", "pegawai", "EVP"],
     },
+    resetOtp: {
+        type: String,
+        default: ''
+    },
+    resetOtpExpireAt: {
+        type: Number,
+        default: 0
+    }
 
 
 }, 
