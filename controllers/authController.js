@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const {transporter} = require('../config/nodemailer');
 
 // register
 const register = async (req, res) => {
