@@ -1,5 +1,5 @@
 const express = require('express');
-const { login, register, logout, getUserDetail, getEmployees, getUserById, getAllUser,deleteUser, updateUser } = require('../controllers/authController');
+const { login, register, logout, getUserDetail, getEmployees, getUserById, getAllUser,deleteUser, updateUser, sendResetOTP, resetPassword } = require('../controllers/authController');
 const router = express.Router();
 
 // route register
@@ -19,6 +19,10 @@ router.get('/getEmp', getEmployees);
 
 //route semua user
 router.get('/getAll', getAllUser)
+
+router.post('/send-reset-otp', sendResetOTP);
+
+router.post('/reset-password', resetPassword);
 
 // route user by id
 router.get('/getUser/:id', getUserById);
