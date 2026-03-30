@@ -2,7 +2,7 @@ const TindakLanjut = require('../models/tindaklanjut.model')
 const mongoose = require('mongoose');
 const GridFSBucket = mongoose.mongo.GridFSBucket;
 
-// mendapatkan data 
+// Get All Tindak Lanjut
 const getTindakLanjut = async (req, res) => {
     try {
         const tindaklanjut = await TindakLanjut.find().populate("personil_yang_dituju", "name").sort({ createdAt: -1 });
@@ -12,6 +12,7 @@ const getTindakLanjut = async (req, res) => {
     }
 }
 
+// Create New Tindak Lanjut
 const createTindakLanjut = async (req, res) => {
     try {
         const bucket = new GridFSBucket(mongoose.connection.db);
@@ -52,14 +53,13 @@ const createTindakLanjut = async (req, res) => {
     }
 }
 
+// Update Tindak Lanjut
 const updateTindakLanjut = async (req, res) => {
     try {
         const { id } = req.params;
         const { judul_tindaklanjut } = req.body;
         const { isi_tindaklanjut } = req.body;
         const userId = req.user?._id || req.user?.id;
-
-        console.log(userId);
 
         let query = { _id: id, personil_yang_dituju: userId };
 
@@ -111,6 +111,7 @@ const updateTindakLanjut = async (req, res) => {
 }
 
 
+// Get Arahan for the logged-in Pegawai Pages
 const getMyArahan = async (req, res) => {
     try {
         const userId = req.user.id || req.user._id;
@@ -128,6 +129,7 @@ const getMyArahan = async (req, res) => {
     }
 };
 
+// Get File from GridFS
 const getFile = async (req, res) => {
     try {
         const { id } = req.params;
@@ -172,6 +174,7 @@ const getFile = async (req, res) => {
     }
 };
 
+// Get File Metadata from GridFS
 const getFileMeta = async (req, res) => {
   try {
     const { id } = req.params;

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const GridFSBucket = mongoose.mongo.GridFSBucket;
 
 
-//get all disposisi
+// Get All Disposisi
 const getDisposisi = async (req, res) => {
     try {
         const disposisi = await Disposisi.find()
@@ -20,9 +20,8 @@ const getDisposisi = async (req, res) => {
     }
 }
 
-// hitung total dispo dibuat
+// Get Count Disposisi
 const getDisposisiCount = async (req, res) => {
-    // console.log("User from token:", req.user);
     try {
         const total = await Disposisi.countDocuments();
         res.status(200).json({ total });
@@ -32,7 +31,7 @@ const getDisposisiCount = async (req, res) => {
     }
 };
 
-//get disposisi by id
+// Get Disposisi by ID
 const getDisposisis = async (req, res) => {
     try {
         const { id } = req.params;
@@ -43,12 +42,13 @@ const getDisposisis = async (req, res) => {
     }
 }
 
-//membuat disposisi
+// reminder options mapping
 const REMINDER_OFFSET_MINUTES = {
     REMINDER_1H: -60,
     REMINDER_30M: -30
 };
 
+// Create New Disposisi
 const createDisposisi = async (req, res) => {
     try {
         let fileId = null;
@@ -75,7 +75,6 @@ const createDisposisi = async (req, res) => {
         const direktorat = req.body.direktorat ? JSON.parse(req.body.direktorat) : [];
         const divisi = req.body.divisi ? JSON.parse(req.body.divisi) : [];
         const ruangan = req.body.ruangan || "";
-        console.log(fileId);
 
         let notificationOptions = [];
         try {
@@ -97,11 +96,6 @@ const createDisposisi = async (req, res) => {
         } else {
             notificationOptions = notificationOptions.map((x) => String(x).trim());
         }
-
-        // console.log('tangggal:', req.body.tanggal);
-        // console.log('jam_mulai:', req.body.jam_mulai);
-        // console.log('notificationOptions rw:', req.body.notificationOptions);
-        // console.log('notificationOptions nrml:', notificationOptions);
 
         const disposisi = await Disposisi.create({
             nama_kegiatan: req.body.nama_kegiatan,
@@ -185,7 +179,7 @@ const createDisposisi = async (req, res) => {
 };
 
 
-//upate disposisi
+// Update Disposisi
 const updateDisposisi = async (req, res) => {
     try {
         const { id } = req.params;
@@ -250,7 +244,7 @@ const updateDisposisi = async (req, res) => {
     }
 };
 
-//delete disposisi
+// Delete Disposisi
 const deleteDisposisi = async (req, res) => {
     try {
         const { id } = req.params;
@@ -268,7 +262,7 @@ const deleteDisposisi = async (req, res) => {
     }
 }
 
-// dapatin dispo sesuai dengan akun masung-masing
+// Get All Laporan Utama and Laporan Tambahan
 const getMyTasks = async (req, res) => {
     try {
         const userId = req.user.id || req.user._id;
@@ -288,7 +282,7 @@ const getMyTasks = async (req, res) => {
     }
 };
 
-// buat bikin dan update laporan
+// Fill Laporan Utama
 const updateLaporan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -351,7 +345,7 @@ const updateLaporan = async (req, res) => {
 };
 
 
-//buat laporan tambahan
+// Fill Laporan Tambahan
 const updateLaporanTambahan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -410,25 +404,22 @@ const updateLaporanTambahan = async (req, res) => {
             .populate('nama_yang_dituju', 'name email')
             .populate('laporan_tambahan_by', 'name email');
 
-        console.log('populated laporan_tambahan_by:', populated.laporan_tambahan_by);
 
         res.json({
             message: 'Laporan tambahan berhasil disimpan',
             disposisi: populated
         });
     } catch (error) {
-        console.error('updateLaporanTambahan error:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
-// menambahkan komentar
+// Create Komentar for Laporan Utama by EVP
 const createKomentar = async (req, res) => {
     try {
         const { id } = req.params;
         const { text } = req.body;
-        console.log(text);
-        console.log(req.body);
+        
         if (!text || !text.trim()) {
             return res.status(400).json({ message: "Komentar tidak boleh kosong" });
         }
@@ -452,7 +443,7 @@ const createKomentar = async (req, res) => {
     }
 };
 
-// buat di bar-chart total kegiatan sesuai direktorat
+// Barchart stats total kegiatan by direktorat
 const statsDirektoratTotal = async (req, res) => {
     try {
         const [rows, direktoratList, divisiList] = await Promise.all([
@@ -484,7 +475,7 @@ const statsDirektoratTotal = async (req, res) => {
     }
 };
 
-// buat di table report bawahnya bar-chart
+// Table Reoirt on Dashboard
 const reportTable = async (req, res) => {
     try {
         const { month, year } = req.query;
@@ -577,7 +568,6 @@ const reportTable = async (req, res) => {
 
         const statsMap = new Map(rows.map(r => [`${r.direktoratId}__${r.divisiId}`, r]));
 
-        // nampilin dari seed buat direktorat dan divisi
         const data = direktoratList.map(dir => {
             const divisiByDir = divisiList.filter(v => v.direktoratId === dir._id);
 
@@ -608,6 +598,7 @@ const reportTable = async (req, res) => {
     }
 };
 
+// Get File PDF from MongoDB GridFS
 const getUpload = async (req, res) => {
     try {
         const { id } = req.params;

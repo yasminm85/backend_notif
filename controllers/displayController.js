@@ -3,7 +3,7 @@ const DurationAgenda = require('../models/durationAgenda.model')
 const mongoose = require('mongoose');
 const GridFSBucket = mongoose.mongo.GridFSBucket;
 
-// dapatin semua gambar atau video
+// Get All Media IMG and Video
 const getAllMedia = async (req, res) => {
     try {
         const display = await Display.find({});
@@ -13,7 +13,7 @@ const getAllMedia = async (req, res) => {
     }
 }
 
-// nambahin gambar atau video
+// Create New Media IMG and Video
 const createMedia = async (req, res) => {
     try {
         if (!req.file) {
@@ -52,7 +52,7 @@ const createMedia = async (req, res) => {
 
 
 
-// dapatin durasi dari agenda
+// Get Date of Start and End Agenda
 const getAgendaDuration = async (req, res) => {
     try {
         const duration = await DurationAgenda.findOne().sort({ createdAt: -1 });
@@ -63,10 +63,9 @@ const getAgendaDuration = async (req, res) => {
 };
 
 
-// buat agenda baru
+// Create Date of Start and End Agenda
 const createAgendaDuration = async (req, res) => {
     try {
-        console.log('BODY:', req.body);
         const agenda = await DurationAgenda.findOneAndUpdate(
             {},
             req.body,
@@ -79,7 +78,7 @@ const createAgendaDuration = async (req, res) => {
 };
 
 
-// hapus gambar atau video
+// Delete Media IMG and Video
 const deleteMedia = async (req, res) => {
     try {
         const { id } = req.params;

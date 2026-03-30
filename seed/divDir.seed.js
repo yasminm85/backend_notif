@@ -41,7 +41,6 @@ async function main() {
     if (!uri) throw new Error('MONGO_URI undefined');
 
     await mongoose.connect(uri);
-    console.log('connected:', mongoose.connection.name);
 
     // Di seed script
     await Divisi.deleteMany({});
@@ -51,7 +50,6 @@ async function main() {
     await Direktorat.insertMany(DIREKTORAT);
     await Divisi.insertMany(DIVISI);
 
-    console.log('seed done (upsert)');
     await mongoose.disconnect();
 }
 

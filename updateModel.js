@@ -5,7 +5,6 @@ const Disposisi = require('../backend/models/disposisi.model');
 (async () => {
   try {
     await mongoose.connect(process.env.DB_CONNECTION);
-    console.log("DB connected");
 
     const result = await Disposisi.updateMany(
       { laporan_status: { $exists: false } },
@@ -20,7 +19,6 @@ const Disposisi = require('../backend/models/disposisi.model');
       }
     );
 
-    console.log("Update result:", result);
   } catch (err) {
     console.error(err);
   } finally {

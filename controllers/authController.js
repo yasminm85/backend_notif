@@ -1,125 +1,126 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {transporter} = require('../config/nodemailer');
+const { transporter } = require('../config/nodemailer');
 
 // register
 const register = async (req, res) => {
-    try {
-        const { name, email, password, role } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const { name, email, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ name, email, password: hashedPassword, role });
-        await newUser.save();
-        res.status(201).json({ message: "User berhasil ditambahkan" });
-    } catch (error) {
-        res.status(500).json({ message: "Something went wrong" });
+    const newUser = new User({ name, email, password: hashedPassword, role });
+    await newUser.save();
+    res.status(201).json({ message: 'User berhasil ditambahkan' });
+  } catch (error) {
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+};
 
-    }
-}
-
-// ambil semua user dari semua role 
+// Get All Data User
 const getAllUser = async (req, res) => {
-    try {
-        const user = await User.find({});
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+  try {
+    const user = await User.find({});
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // login
 const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ msg: `User dengan ${email} tersebut tidak ditemukan` });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ msg: "Password Anda Salah " })
-        }
-
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        res.status(200).json({ 
-            msg: "Login Berhasil",
-            token,
-        user: {
-            id: user._id,
-            email: user.email,
-            role: user.role
-        } });
-    } catch (error) {
-        res.status(500).json({ msg: "Something went wrong" });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ msg: `User dengan ${email} tersebut tidak ditemukan` });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Password Anda Salah ' });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' },
+    );
+
+    res.status(200).json({
+      msg: 'Login Berhasil',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ msg: 'Something went wrong' });
+  }
 };
 
-// dapatkan user berdasarkan token
+// Get User Detail
 const getUserDetail = async (req, res) => {
-    try {
-        let token;
+  try {
+    let token;
 
-        if (req.headers.authorization) {
-            const [type, value] = req.headers.authorization.split(" ");
-            if (type === "Bearer" && value) {
-                token = value;
-            }
-        }
-
-        if (!token) {
-            return res.status(401).json({ message: "Token Missing" });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const user = await User.findById(decoded.id).select("-password");
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        return res.status(200).json(user);
-    } catch (error) {
-        // console.error("ERROR:", error);
-        return res.status(500).json({
-            message: "Something went wrong",
-            errorName: error.name,
-            errorMessage: error.message,
-        });
+    if (req.headers.authorization) {
+      const [type, value] = req.headers.authorization.split(' ');
+      if (type === 'Bearer' && value) {
+        token = value;
+      }
     }
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token Missing' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Something went wrong',
+      errorName: error.name,
+      errorMessage: error.message,
+    });
+  }
 };
 
-
-// dapatin yang pegawai pegawai ajah
+// Get User that Role is Pegawai
 const getEmployees = async (req, res) => {
   try {
-    const employees = await User.find({ role: 'pegawai' }).select('_id email name password');
+    const employees = await User.find({ role: 'pegawai' }).select(
+      '_id email name password',
+    );
     res.json(employees);
   } catch (err) {
-    // console.error('Error getEmployees:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// get user by id
+// Get User by Id
 const getUserById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = await User.findById(id).select('name');
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-}
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select('name');
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//update user
+// Update User
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,14 +133,13 @@ const updateUser = async (req, res) => {
       delete payload.password;
     }
 
-    const userUpdate = await User.findByIdAndUpdate(
-      id,
-      payload,
-      { new: true, runValidators: true }
-    ).select("-password");
+    const userUpdate = await User.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
 
     if (!userUpdate) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     res.status(200).json(userUpdate);
@@ -148,126 +148,127 @@ const updateUser = async (req, res) => {
   }
 };
 
-
-// hapus user
+// Delete User
 const deleteUser = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-        const user = await User.findByIdAndDelete(id);
+    const user = await User.findByIdAndDelete(id);
 
-        if(!user) {
-            return res.status(404).json({message: "Data not found"});
-        }
-
-        res.status(200).json({message: "Data successfully delete"})
-
-    } catch (error) {
-        res.status(500).json({message: error.message});
+    if (!user) {
+      return res.status(404).json({ message: 'Data not found' });
     }
-}
 
-// logout
+    res.status(200).json({ message: 'Data successfully delete' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Logout
 const logout = async (req, res) => {
-    try {
-        res.cookie("token", "", {
-            httpOnly: true,
-            secure: false,
-            sameSite: "Lax",
-            expires: new Date(0),
-        });
-        res.status(200).json({ msg: "Logout Sucessfull" });
-    } catch (error) {
-        return res.status(500).json({ msg: "Server error", error });
+  try {
+    res.cookie('token', '', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Lax',
+      expires: new Date(0),
+    });
+    res.status(200).json({ msg: 'Logout Sucessfull' });
+  } catch (error) {
+    return res.status(500).json({ msg: 'Server error', error });
+  }
+};
 
-    }
-}
-
+// Send Reset OTP
 const sendResetOTP = async (req, res) => {
-    const { email } = req.body;
+  const { email } = req.body;
 
-    if(!email) {
-        return res.status(400).json({ message: "Email is required" });
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    try {
-        const user = await User.findOne({ email });
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-        if(!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+    user.resetOtp = otp;
+    user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
 
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
+    await user.save();
 
-        user.resetOtp = otp;
-        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: user.email,
+      subject: 'Password Reset OTP',
+      text: `Your OTP for ressetting your password is ${otp}. User this OTP to process with resetting your password`,
+    };
 
-        await user.save();
+    await transporter.sendMail(mailOption);
 
-        const mailOption = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Password Reset OTP',
-            text: `Your OTP for ressetting your password is ${otp}. User this OTP to process with resetting your password`
-        }
+    return res.status(200).json({ message: 'OTP sent to your email ' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-       await transporter.sendMail(mailOption);
-
-        return res.status(200).json({message: 'OTP sent to your email '});
-        
-    } catch (error) {
-        return res.status(500).json({ message: error.message});
-    }
-
-}
-
+// Reset Password
 const resetPassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
 
-    const { email, otp, newPassword } = req.body;
+  if (!email || !otp || !newPassword) {
+    return res.json({
+      success: false,
+      message: 'Email, OTP, and new password are required',
+    });
+  }
 
-    if(!email || !otp || !newPassword) {
-        return res.json({ success: false, message: 'Email, OTP, and new password are required'});
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: 'User not found' });
     }
 
-    try {
-        const user = await User.findOne({ email });
-
-        if(!user) {
-            return res.json({ success: false, message: 'User not found'});
-        }
-
-        if(user.resetOtp === "" || user.resetOtp !== otp) {
-            return res.json({ success: false, message: 'Invalid OTP'});
-        }
-
-        if(user.resetOtpExpireAt < Date.now()) {
-            return res.json({ success: false, message: 'OTP Expired'});
-        }
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        user.password = hashedPassword;
-        user.resetOtp = '';
-        user.resetOtpExpireAt = 0;
-
-        await user.save();
-
-        return res.status(200).json({ success: true, message: 'Password has been reset successfully'});
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message});
+    if (user.resetOtp === '' || user.resetOtp !== otp) {
+      return res.json({ success: false, message: 'Invalid OTP' });
     }
-}
+
+    if (user.resetOtpExpireAt < Date.now()) {
+      return res.json({ success: false, message: 'OTP Expired' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetOtp = '';
+    user.resetOtpExpireAt = 0;
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Password has been reset successfully' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 module.exports = {
-    login,
-    register,
-    logout,
-    getUserDetail,
-    getEmployees,
-    getUserById,
-    getAllUser,
-    deleteUser,
-    updateUser,
-    sendResetOTP,
-    resetPassword
+  login,
+  register,
+  logout,
+  getUserDetail,
+  getEmployees,
+  getUserById,
+  getAllUser,
+  deleteUser,
+  updateUser,
+  sendResetOTP,
+  resetPassword,
 };

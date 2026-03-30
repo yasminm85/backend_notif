@@ -1,7 +1,7 @@
 const Notification = require('../models/notif.model')
 const Disposisi = require('../models/disposisi.model')
 
-// dapatin notifikasi di dashboard biar muncul teng notif nya
+// Get Notifications for the logged-in Pegawai Dashboard
 const getMyNotifications = async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
@@ -41,7 +41,7 @@ const getMyNotifications = async (req, res) => {
 };
 
 
-// menandakan bahwa notifikasi sudah diisi
+// Mark Notification as Done in Pegawai Dashboard
 const markNotificationDone = async (req, res) => {
   try {
     const { id } = req.params;
