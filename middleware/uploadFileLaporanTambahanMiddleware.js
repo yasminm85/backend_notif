@@ -15,7 +15,7 @@ const upload_laporan_tambahan = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 10 // 10MB
+    fileSize: 1024 * 1024 * 2 // 2MB
   }
 });
 
