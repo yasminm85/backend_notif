@@ -41,7 +41,7 @@ router.get('/disposisi/:id', verifyToken, authorizationRoles('admin'), getDispos
 router.delete('/disposisi/:id', verifyToken, authorizationRoles('admin'), deleteDisposisi);
 
 // update disposisi
-router.patch('/disposisi/:id', verifyToken, authorizationRoles('admin'), upload.single('file'),updateDisposisi);
+router.patch('/disposisi/:id', verifyToken, authorizationRoles('admin'), handleUpload,updateDisposisi);
 
 // get upload pdf 
 router.get('/file/:id', getUpload);
