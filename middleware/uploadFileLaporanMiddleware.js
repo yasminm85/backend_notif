@@ -41,4 +41,4 @@ const handleUploadLaporan = (req, res, next) => {
 };
 
 
-module.exports = {handleUploadLaporan};
+module.exports = handleUploadLaporan;

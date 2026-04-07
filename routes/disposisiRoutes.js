@@ -2,9 +2,9 @@ const express = require("express");
 const verifyToken = require('../middleware/authMiddleware');
 const authorizationRoles = require('../middleware/roleMiddleware');
 const router = express.Router();
-const {handleUpload} = require('../middleware/uploadMiddleware')
-const {handleUploadLaporan} = require('../middleware/uploadFileLaporanMiddleware')
-const {handleUploadLaporanTambahan} = require('../middleware/uploadFileLaporanTambahanMiddleware')
+const handleUpload = require('../middleware/uploadMiddleware')
+const handleUploadLaporan = require('../middleware/uploadFileLaporanMiddleware')
+const handleUploadLaporanTambahan = require('../middleware/uploadFileLaporanTambahanMiddleware')
 
 const { getDisposisi, getDisposisiCount, getDisposisis, createDisposisi, deleteDisposisi, getMyTasks, updateDisposisi, updateLaporan, createKomentar, statsDirektoratTotal, reportTable, updateLaporanTambahan, getUpload } = require('../controllers/disposisiController');
 

@@ -40,4 +40,4 @@ const handleUploadDisplay = (req, res, next) => {
     });
 };
 
-module.exports = {handleUploadDisplay};
+module.exports = handleUploadDisplay;

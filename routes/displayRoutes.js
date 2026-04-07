@@ -2,7 +2,7 @@ const express = require('express');
 const verifyToken = require('../middleware/authMiddleware');
 const authorizationRoles = require('../middleware/roleMiddleware');
 const {createMedia, createAgendaDuration, deleteMedia, getAllMedia, getAgendaDuration } = require('../controllers/displayController');
-const {handleUploadDisplay} = require('../middleware/uploadFileDisplayMiddleware');
+const handleUploadDisplay = require('../middleware/uploadFileDisplayMiddleware');
 const router = express.Router();
 
 // route get all media
