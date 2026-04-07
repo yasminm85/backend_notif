@@ -15,7 +15,7 @@ const upload_file_display = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 50 // 50MB
+    fileSize: 1024 * 1024 * 3 // 3MB
   }
 });
 
@@ -40,4 +40,4 @@ const handleUploadDisplay = (req, res, next) => {
     });
 };
 
-module.exports = {upload_file_display, handleUploadDisplay};
+module.exports = {handleUploadDisplay};

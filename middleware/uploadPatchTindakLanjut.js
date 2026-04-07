@@ -15,7 +15,7 @@ const upload = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 2 // 2MB
+    fileSize: 1024 * 1024 * 3 // 3MB
   }
 });
 
@@ -23,4 +23,32 @@ const upload_file_tindaklanjut = upload.fields([
   { name: 'file_tindaklanjut', maxCount: 5 }
 ]);
 
-module.exports = upload_file_tindaklanjut;
+const handleUploadTindakLanjut = (req, res, next) => {
+    upload_file_tindaklanjut(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Ukuran file terlalu besar! Maksimal 3MB per file.' 
+                });
+            }
+            if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'File terlalu banyak atau field salah! Maksimal upload 5 file sekaligus.' 
+                });
+            }
+            return res.status(400).json({ success: false, message: err.message });
+            
+        } else if (err) {
+            return res.status(400).json({ 
+                success: false, 
+                message: err.message 
+            });
+        }
+        
+        next();
+    });
+};
+
+module.exports = handleUploadTindakLanjut;

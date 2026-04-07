@@ -14,7 +14,7 @@ const upload = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 2 // 2MB
+    fileSize: 1024 * 1024 * 3 // 3MB
   }
 });
 
@@ -39,4 +39,4 @@ const handleUpload = (req, res, next) => {
     });
 };
 
-module.exports = {upload, handleUpload};
+module.exports = handleUpload;

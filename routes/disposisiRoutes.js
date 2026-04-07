@@ -4,7 +4,7 @@ const authorizationRoles = require('../middleware/roleMiddleware');
 const router = express.Router();
 const {handleUpload} = require('../middleware/uploadMiddleware')
 const {handleUploadLaporan} = require('../middleware/uploadFileLaporanMiddleware')
-const upload_laporan_tambahan = require('../middleware/uploadFileLaporanTambahanMiddleware')
+const {handleUploadLaporanTambahan} = require('../middleware/uploadFileLaporanTambahanMiddleware')
 
 const { getDisposisi, getDisposisiCount, getDisposisis, createDisposisi, deleteDisposisi, getMyTasks, updateDisposisi, updateLaporan, createKomentar, statsDirektoratTotal, reportTable, updateLaporanTambahan, getUpload } = require('../controllers/disposisiController');
 
@@ -29,7 +29,7 @@ router.post('/disposisi', verifyToken, authorizationRoles('admin'), handleUpload
 router.patch('/disposisi/:id/laporan', verifyToken, authorizationRoles('pegawai', 'admin'), handleUploadLaporan, updateLaporan);
 
 // create dan update laporan tambahan
-router.patch('/disposisi/:id/laporan-tambahan', verifyToken, authorizationRoles('pegawai', 'admin'), upload_laporan_tambahan.single('laporan_tambahan_path'), updateLaporanTambahan);
+router.patch('/disposisi/:id/laporan-tambahan', verifyToken, authorizationRoles('pegawai', 'admin'), handleUploadLaporanTambahan, updateLaporanTambahan);
 
 // nambahin komentar
 router.patch('/disposisi/:id/komentar', verifyToken, authorizationRoles('EVP'), createKomentar);

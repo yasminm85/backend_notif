@@ -15,7 +15,7 @@ const upload_laporan = multer({
     }
   },
   limits: {
-    fileSize: 1024 * 1024 * 2 // 2MB
+    fileSize: 1024 * 1024 * 3 // 3MB
   }
 });
 
@@ -41,4 +41,4 @@ const handleUploadLaporan = (req, res, next) => {
 };
 
 
-module.exports = {upload_laporan,   handleUploadLaporan};
+module.exports = {handleUploadLaporan};
