@@ -19,7 +19,7 @@ const upload_laporan = multer({
   }
 });
 
-const handleUpload = (req, res, next) => {
+const handleUploadLaporan = (req, res, next) => {
     upload_laporan.single('laporan_file_path')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') {
@@ -41,4 +41,4 @@ const handleUpload = (req, res, next) => {
 };
 
 
-module.exports = {upload_laporan, handleUpload};
+module.exports = {upload_laporan,   handleUploadLaporan};

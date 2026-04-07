@@ -19,7 +19,7 @@ const upload_file_display = multer({
   }
 });
 
-const handleUpload = (req, res, next) => {
+const handleUploadDisplay = (req, res, next) => {
     upload_file_display.single('display_path')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') {
@@ -40,4 +40,4 @@ const handleUpload = (req, res, next) => {
     });
 };
 
-module.exports = {upload_file_display, handleUpload};
+module.exports = {upload_file_display, handleUploadDisplay};
