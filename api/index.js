@@ -31,13 +31,13 @@ app.use(cors({
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://frontend-navnotif.vercel.app",
-    methods: ["GET", "POST"]
+    origin: [
+        "http://localhost:3001", 
+        "https://frontend-navnotif.vercel.app" 
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
   }
-});
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
 
 // routes
