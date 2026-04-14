@@ -4,7 +4,15 @@ const Direktorat = require('../models/direktorat.model')
 const Divisi = require('../models/divisi.model')
 const mongoose = require('mongoose');
 const GridFSBucket = mongoose.mongo.GridFSBucket;
+const Pusher = require('pusher');
 
+const pusher = new Pusher({
+  appId: "2140939",
+  key: "8c79ec8ec21fcdde2c2f",
+  secret: "9856c0cb5c6a274ff484",
+  cluster: "mt1",
+  useTLS: true
+});
 
 // Get All Disposisi
 const getDisposisi = async (req, res) => {
@@ -171,7 +179,7 @@ const createDisposisi = async (req, res) => {
             .populate("laporan_tambahan_by", "name email");
 
         res.status(200).json(disposisiId);
-        req.io.emit('disposisi baru', disposisiId);
+        await pusher.trigger(disposisiId);
 
     } catch (error) {
         console.error('createDisposisi error:', error);
