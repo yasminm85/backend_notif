@@ -171,6 +171,7 @@ const createDisposisi = async (req, res) => {
             .populate("laporan_tambahan_by", "name email");
 
         res.status(200).json(disposisiId);
+        req.io.emit('disposisi baru', disposisiId);
 
     } catch (error) {
         console.error('createDisposisi error:', error);
