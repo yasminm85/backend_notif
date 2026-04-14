@@ -31,13 +31,13 @@ app.use(cors({
 
 const io = new Server(httpServer, {
   cors: {
-    origin: [
-        "http://localhost:3001", 
-        "https://frontend-navnotif.vercel.app" 
-    ],
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: "https://frontend-navnotif.vercel.app", 
+    methods: ["GET", "POST"]
   }
+});
+
+io.on("connection", (socket) => {
+  console.log("User terhubung:", socket.id);
 });
 
 // routes
