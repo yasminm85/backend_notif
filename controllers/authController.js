@@ -7,6 +7,14 @@ const { transporter } = require('../config/nodemailer');
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters',
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({ name, email, password: hashedPassword, role });
