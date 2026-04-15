@@ -49,12 +49,12 @@ const createMedia = async (req, res) => {
             duration: req.body.duration
         });
 
-        await pusher.trigger(display);
-
         res.status(201).json({
             message: 'File uploaded successfully',
             display
         });
+
+        await pusher.trigger(display);
     } catch (error) {
         console.error('createMedia error:', error);
         res.status(500).json({ message: error.message });
