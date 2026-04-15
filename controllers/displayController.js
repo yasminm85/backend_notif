@@ -2,6 +2,15 @@ const Display = require('../models/display.model')
 const DurationAgenda = require('../models/durationAgenda.model')
 const mongoose = require('mongoose');
 const GridFSBucket = mongoose.mongo.GridFSBucket;
+const Pusher = require('pusher');
+
+const pusher = new Pusher({
+  appId: "2140939",
+  key: "8c79ec8ec21fcdde2c2f",
+  secret: "9856c0cb5c6a274ff484",
+  cluster: "mt1",
+  useTLS: true
+});
 
 // Get All Media IMG and Video
 const getAllMedia = async (req, res) => {
@@ -39,6 +48,8 @@ const createMedia = async (req, res) => {
             displayFileId,
             duration: req.body.duration
         });
+
+        await pusher.trigger(display);
 
         res.status(201).json({
             message: 'File uploaded successfully',
