@@ -217,6 +217,35 @@ const sendResetOTP = async (req, res) => {
   }
 };
 
+//Check OTP
+const checkOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ message: 'Email and OTP are required' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.resetOtp === '' || user.resetOtp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    if (user.resetOtpExpireAt < Date.now()) {
+      return res.status(400).json({ message: 'OTP Expired' });
+    }
+
+    return res.status(200).json({ message: 'OTP is valid' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // Reset Password
 const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
@@ -228,19 +257,28 @@ const resetPassword = async (req, res) => {
     });
   }
 
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  if (!passwordRegex.test(newPassword)) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters',
+    });
+  }
+
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.json({ success: false, message: 'User not found' });
+      return res.status(404).json({  message: 'User not found' });
     }
 
     if (user.resetOtp === '' || user.resetOtp !== otp) {
-      return res.json({ success: false, message: 'Invalid OTP' });
+      return res.status(400).json({  message: 'Invalid OTP' });
     }
 
     if (user.resetOtpExpireAt < Date.now()) {
-      return res.json({ success: false, message: 'OTP Expired' });
+      return res.status(400).json({  message: 'OTP Expired' });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -271,4 +309,5 @@ module.exports = {
   updateUser,
   sendResetOTP,
   resetPassword,
+  checkOTP
 };
